@@ -14,7 +14,7 @@ This process has the following steps:
 8. The Dockerfile has an instruction to build the primary module of the application now that the dependencies are installed and available. For a java application this happens as part of a single maven command to build the entire application, main module and dependencies all, making it part of the prior step.
 9. The Dockerfile instructions are complete and the new image with specified tag is added to the local docker repository.
 
-<img src="images\whitespace200.png"/>[|-- Prior job](Jenkins1.md)<img src="images\whitespace200.png"/>[Next job --|](images/Jenkins3.md)
+<img src="images\whitespace200.png"/>[|-- Prior job](Jenkins1.md)<img src="images\whitespace200.png"/>[Next job --|](Jenkins3.md)
 
 
 
