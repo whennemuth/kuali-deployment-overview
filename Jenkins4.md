@@ -8,9 +8,12 @@ The sequence of actions depicted below are:
 
 1. Trigger the jenkins job
 2. The job runs a shell command to call a function in one of the helper bash scripts to package a series of bash commands and issue the to the EC2 Systems Manager service (SSM) using the AWS CLI.
-3. The SSM invokes the commands on the remote application host (an EC2 instance), the first among them being a command to delete the currently running docker container comprising the prior version of the application.
-4. The next SSM command is to prune any unused docker images. The "dangling" docker images will probably include the image for the application of the prior release.
-5. The next SSM command 
+3. The SSM invokes the commands on the remote application host (an EC2 instance), the first among them being a command to delete the currently running docker container representing the prior version of the application.
+4. The next SSM command run  on the remote application host is to prune any unused docker images. The "dangling" docker images will probably include the image for the application of the prior release.
+5. The next SSM command run  on the remote application host pulls the new docker image down from the registry.
+6. The final SSM command run  on the remote application host runs a docker container from the new docker image.
+
+​    
 
 [|-- Prior job](Jenkins3.md)
 
