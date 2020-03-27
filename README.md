@@ -16,4 +16,6 @@ This repository comprises a rough knowledge transfer and documentation point for
     Details how to renew expiring SSL/TLS certificates in AWS.
   - [Resize EBS Volume for an EC2 Instance](ResizeEBSVolume.md)
     Details how to increase the available disk space for an EC2 instance that needs more room.
+  - [Update Docker Registry](UpdateDockerRegistry.md)
+    Details how to download docker images from kualico and upload them to our ECR
 
