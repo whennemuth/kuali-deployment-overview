@@ -18,4 +18,6 @@ This repository comprises a rough knowledge transfer and documentation point for
     Details how to increase the available disk space for an EC2 instance that needs more room.
   - [Update Docker Registry](UpdateDockerRegistry.md)
     Details how to download docker images from kualico and upload them to our ECR
+  - [Elastic Search for Kuali](https://github.com/bu-ist/kuali-cloudformation/blob/master/related/es_for_kuali.md)
+    Details the cloud formation setup and configuration of the elastic search cluster for the search feature used by the research-portal and kc applications.
 
