@@ -37,15 +37,18 @@ MAILTO=root
 $crontab root sh $(pwd)/DiskCleanup.sh $args
 EOF
 
-  if [ ! -d $crondir ] ; then
-    chmod 755 $crontabfile
-    crontab -u root $crontabfile
-    crontab -l -u root
-  else
+  if [ -d "/etc/cron.d" ] ; then
     # The following level of ownership/auth should be set this way by default, but make sure...
     chmod 644 $crontabfile
     chown root:root $crontabfile
+  else
+    chmod 755 $crontabfile
+    crontab -u root $crontabfile
+    crontab -l -u root
   fi
+  echo "Set crontab: $crontabfile"
+  echo ""
+  cat $crontabfile
 }
 
 logState() {
