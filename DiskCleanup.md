@@ -135,8 +135,43 @@ There are two main culprits for gradual size increase of used disk space on our 
          
 
 To automate all the actions above, a script is included in this repository: [DiskCleanup.sh](DiskCleanup.sh)
-You can place this script file on any EC2 and run it: `sh DiskCleanup.sh`
-Or you can put it on a cron schedule.
+You can place this script file on any EC2 and run it or set it on a cron schedule as follows:
+
+```
+# You have shelled into an EC2 instance.
+
+# 1) Sudo to root and go to the home directory (or some other directory), AND STAY THERE.
+sudo su root
+cd ~
+
+# 2) Acquire DiskCleanup.md from this git repository
+# You can cut and paste the old-fashioned way, or you could use the personal access token
+# that belongs to the bu-ist-user github user. You can find this token under passwords in
+# 1Password entitled "Personal Access Token for bu-ist-user"
+
+curl \
+  -H "Authorization: token ${token}" \
+  -L https://api.github.com/repos/bu-ist/kuali-deployment-overview/contents/DiskCleanup.sh \
+  | jq '.content' \
+  | sed 's/\\n//g' \
+  | sed 's/"//g' \
+  | base64 --decode \
+  > DiskCleanup.sh
+
+# 3) Invoke a cleanup immediately:
+# If you want to invoke all methods of cleanup (docker images, docker volumes, tomcat logs, apache logs)
+
+sh DiskCleanup.sh --all
+# or...
+sh DiskCleanup.sh --images --volumes --tomcat --apache
+
+# Or just some methods:
+sh DiskCleanup.sh --images --tomcat
+
+# To specify a cron schedule instead use --crontab. 
+# This example invokes cleanup for images and tomcat on the 1st day of the month at 2AM
+sh DiskCleanup.sh --images --tomcat --crontab '0 2 1 * *'
+```
 
 ​     
 

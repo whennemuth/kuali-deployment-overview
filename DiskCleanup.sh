@@ -164,7 +164,7 @@ parseargs() {
       -l|--logfile)
         eval "$(parseValue $1 "$2" 'logfile')" ;;
       -c|--crontab)
-        eval "$(parseValue $1 "$2" 'cron')" ;;
+        eval "$(parseValue $1 "$2" 'crontab')" ;;
       -*|--*=) # unsupported flags
         echo "Error: Unsupported flag $1" >&2
         printusage
@@ -188,7 +188,7 @@ parseValue() {
   [ "$#" == '3' ] && eval "$3="
   [ "$#" == '2' ] && eval "$2="
 
-  if [ -n "$2" ] && [ ${2:0:1} == '-' ] ; then
+  if [ -n "$2" ] && [ "${2:0:1}" == '-' ] ; then
     # Named arg found with no value (it is followed by another named arg)
     echo "echo 'ERROR! $1 has no value!' && exit 1"
     exit 1
@@ -242,7 +242,7 @@ parseargs "$@"
 
 if [ -n "$LOGGING" ] ; then
   shift
-  if [ -n "$cron" ] ; then
+  if [ -n "$crontab" ] ; then
     setCrontab $@
   else
     prune
