@@ -25,7 +25,7 @@ setCrontab() {
   [ -n "$tomcat" ]  && args=" $args --tomcat"
   [ -n "$apache" ]  && args=" $args --apache"
   [ -n "$debug" ]   && args=" $args --debug"
-  args=" --logfile $logfile"
+  args=" $args --logfile $logfile"
 
   cat <<EOF > $crontabfile
 SHELL=/bin/bash
