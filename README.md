@@ -20,4 +20,8 @@ This repository comprises a rough knowledge transfer and documentation point for
     Details how to download docker images from kualico and upload them to our ECR
   - [Elastic Search for Kuali](https://github.com/bu-ist/kuali-cloudformation/blob/master/related/es_for_kuali.md)
     Details the cloud formation setup and configuration of the elastic search cluster for the search feature used by the research-portal and kc applications.
+  - [EC2 Access Management](EC2AccessManagement.md)
+    Details how the EC2 server application hosts and the Jenkins EC2 server have been given access to certain AWS resources through command line interface (cli) calls.
+  - [EC2 Disk Cleanup](DiskCleanup.md)
+    Details how to reclaim disk space on our EC2 application hosts due to logging and docker activity.
 
