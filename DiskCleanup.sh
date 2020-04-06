@@ -261,7 +261,7 @@ else
   if [ -f "$logfile" ] ; then
     # NOTE: As long as the crontab calls DiskCleanup.sh with an absolute path, $0 will return that absolute path.
     # $(pwd) will return "/usr/bin", where DiskCleanup.sh is NOT located, so don't use it.
-    local scriptdir="$(dirname "$0")"
+    scriptdir="$(dirname "$0")"
     if [ "${scriptdir:0:1}" == "." ] ; then
       # The script was not called by absolute path
       scriptdir="$(pwd)"
