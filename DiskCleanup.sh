@@ -20,12 +20,18 @@ setCrontab() {
   [ ! -d $crondir ] && crondir="/root"
   local crontabfile="$crondir/kuali-prune-crontab"
   local args=""
-  [ -n "$images" ]  && args=" $args --images"
-  [ -n "$volumes" ] && args=" $args --volumes"
-  [ -n "$tomcat" ]  && args=" $args --tomcat"
-  [ -n "$apache" ]  && args=" $args --apache"
-  [ -n "$debug" ]   && args=" $args --debug"
-  args=" $args --logfile $logfile"
+  [ -n "$images" ]  && args="$args --images"
+  [ -n "$volumes" ] && args="$args --volumes"
+  [ -n "$tomcat" ]  && args="$args --tomcat"
+  [ -n "$apache" ]  && args="$args --apache"
+  [ -n "$debug" ]   && args="$args --debug"
+  args="$args --logfile $logfile"
+
+  local scriptdir="$(dirname "$0")"
+  if [ "${scriptdir:0:1}" == "." ] ; then
+    # The script was not called by absolute path
+    scriptdir="$(pwd)"
+  fi
 
   cat <<EOF > $crontabfile
 SHELL=/bin/bash
@@ -34,7 +40,7 @@ MAILTO=root
 
 # Run disk cleanup to free up space taken by kuali apps.
 
-$crontab root sh $(pwd)/DiskCleanup.sh $args
+$crontab root sh $scriptdir/DiskCleanup.sh $args
 EOF
 
   if [ -d "/etc/cron.d" ] ; then
@@ -253,8 +259,15 @@ if [ -n "$LOGGING" ] ; then
 else
   setLogFile
   if [ -f "$logfile" ] ; then
-    # sh $(pwd)/doread.sh "LOGGING $@ |& tee -a $logfile
-    sh $(pwd)/DiskCleanup.sh "--LOGGING" $@ "--logfile" $logfile 2>&1 | tee -a "$logfile"
+    # NOTE: As long as the crontab calls DiskCleanup.sh with an absolute path, $0 will return that absolute path.
+    # $(pwd) will return "/usr/bin", where DiskCleanup.sh is NOT located, so don't use it.
+    local scriptdir="$(dirname "$0")"
+    if [ "${scriptdir:0:1}" == "." ] ; then
+      # The script was not called by absolute path
+      scriptdir="$(pwd)"
+    fi
+    sh $scriptdir/DiskCleanup.sh "--LOGGING" "$@" "--logfile" $logfile 2>&1 | tee -a "$logfile"
+    # sh $scriptdir/DiskCleanup.sh "--LOGGING" "$@" "--logfile" $logfile |& tee -a $logfile
   else
     echo "ERROR! Cannot create log file: $logfile"
   fi
