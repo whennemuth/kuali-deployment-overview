@@ -13,6 +13,8 @@ prune() {
   [ -n "$apache" ] && pruneApacheLogs
 
   logState "Pruned"
+
+  [ -n "$emailAddress" ] && sendReport
 }
 
 setCrontab() {
@@ -55,6 +57,28 @@ EOF
   echo "Set crontab: $crontabfile"
   echo ""
   cat $crontabfile
+}
+
+setLowDiskNoficationCrontab() {
+  local crondir="/etc/cron.d"
+  [ ! -d $crondir ] && crondir="/root"
+  local crontabfile="$crondir/kuali-low-disk-crontab"
+    
+  local scriptdir="$(dirname "$0")"
+  if [ "${scriptdir:0:1}" == "." ] ; then
+    # The script was not called by absolute path
+    scriptdir="$(pwd)"
+  fi
+
+  cat <<EOF > $crontabfile
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# Notify via email if this ec2 instance has over the specified percent disk utilization.
+
+$notifyCrontab root sh $scriptdir/DiskCleanup.sh --notify-disk-percent $notifyPercent --email $email
+EOF
 }
 
 logState() {
@@ -174,6 +198,12 @@ parseargs() {
         eval "$(parseValue $1 "$2" 'logfile')" ;;
       -c|--crontab)
         eval "$(parseValue $1 "$2" 'crontab')" ;;
+      -e|--email)
+        eval "$(parseValue $1 "$2" 'email')" ;;
+      --notify-disk-percent)
+        eval "$(parseValue $1 "$2" 'notifyPercent')" ;;
+      --notify-disk-crontab)
+        eval "$(parseValue $1 "$2" 'notifyCrontab')" ;;
       -*|--*=) # unsupported flags
         echo "Error: Unsupported flag $1" >&2
         printusage
@@ -247,15 +277,94 @@ setLogFile() {
   fi
 }
 
+getEnvIdentifier() {
+  local instanceId="$(curl http://169.254.169.254/latest/meta-data/instance-id 2> /dev/null)"
+  if [ -n "$instanceId" ] ; then
+    case "$instanceId" in
+      "i-099de1c5407493f9b") echo "Sandbox 1" ;;
+      "i-0c2d2ef87e98f2088") echo "Sandbox 2" ;;
+      "i-0258a5f2a87ba7972") echo "CI 1" ;;
+      "i-0511b83a249cd9fb1") echo "CI 2" ;;
+      "i-011ccd29dec6c6d10") echo "QA" ;;
+      "i-090d188ea237c8bcf") echo "Staging 1" ;;
+      "i-0cb479180574b4ba2") echo "Staging 2" ;;
+      "i-0534c4e38e6a24009") echo "Prod 1" ;;
+      "i-07d7b5f3e629e89ae") echo "Prod 2" ;;
+    esac
+  else
+    echo "$HOSTNAME"
+  fi
+}
+
+sendReport() {
+  aws ses send-email \
+  --from $email \
+  --to $email \
+  --subject "Kuali ec2 disk cleanup report for $(getEnvIdentifier)" \
+  --text "$(cat $logfile)"
+}
+
+# Check that the percent disk utilization is under the specified percentage. 
+# If disk utilization breaches this percent threshold, then sent a warning email.
+checkLowDisk() {  
+  local percentUsed=$(df -h --output=pcent / | sed -n 2p | grep -oP '\d+')
+  local instanceId="$(curl http://169.254.169.254/latest/meta-data/instance-id 2> /dev/null)"
+
+  if [ $percentUsed -ge $notifyPercent ] ; then
+    local subject="${notifyPercent}% disk utilization exceeded for kuali ec2 $(getEnvIdentifier)"
+    local text=$(cat <<EOF
+
+    EC2 instance: 
+      Host: $HOSTNAME
+      InstanceId: $instanceId
+
+    Disk Usage:
+      Notification percent threshold: $notifyPercent
+      Acutal percent used: $percentUsed
+
+    If this is too high, check the crontab schedule for pruning disk space is set.
+EOF
+) 
+    if daySinceLastEmail ; then   
+      aws ses send-email \
+        --from $email \
+        --to $email \
+        --subject "$subject" \
+        --text "$text"
+
+      printf "$(date '+%s')" > /tmp/lastDiskWarningSent
+    else
+      echo "Disk usage over ${notifyPercent}%, but a notification was sent less than 24 hours ago. Postponing nofitication until a full since the last."
+    fi
+  fi
+}
+
+daySinceLastEmail() {
+  local then=$(cat /tmp/lastDiskWarningSent 2> /dev/null)
+  local day=$((60 * 60 * 24))
+  local elapsed=$day
+  if [ -n "$then" ] ; then
+    local now=$(date '+%s')
+    local elapsed=$(($now - $then))
+  fi    
+  [ $elapsed -ge $day ] && true || false
+}
+
 parseargs "$@"
 
 if [ -n "$LOGGING" ] ; then
   shift
   if [ -n "$crontab" ] ; then
-    setCrontab $@
+    setCrontab
   else
     prune
   fi
+elif [ -n "$notifyPercent" ]  ; then
+    if [ -n "$notifyCrontab" ] ; then
+      setLowDiskNoficationCrontab
+    else
+      checkLowDisk
+    fi
 else
   setLogFile
   if [ -f "$logfile" ] ; then
@@ -266,8 +375,8 @@ else
       # The script was not called by absolute path
       scriptdir="$(pwd)"
     fi
-    sh $scriptdir/DiskCleanup.sh "--LOGGING" "$@" "--logfile" $logfile 2>&1 | tee -a "$logfile"
-    # sh $scriptdir/DiskCleanup.sh "--LOGGING" "$@" "--logfile" $logfile |& tee -a $logfile
+    sh $scriptdir/DiskCleanup.sh "--LOGGING" "$@" "--logfile" $logfile 2>&1 | tee "$logfile"
+    # sh $scriptdir/DiskCleanup.sh "--LOGGING" "$@" "--logfile" $logfile |& tee $logfile
   else
     echo "ERROR! Cannot create log file: $logfile"
   fi

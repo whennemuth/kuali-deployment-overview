@@ -135,7 +135,7 @@ There are two main culprits for gradual size increase of used disk space on our 
          
 
 To automate all the actions above, a script is included in this repository: [DiskCleanup.sh](DiskCleanup.sh)
-You can place this script file on any EC2 and run it or set it on a cron schedule as follows:
+You can place this script file on any EC2 instance and run it or set it on a cron schedule as follows:
 
 ```
 # You have shelled into an EC2 instance.
@@ -160,22 +160,52 @@ curl \
 
 # 3) Invoke a cleanup immediately:
 # If you want to invoke all methods of cleanup (docker images, docker volumes, tomcat logs, apache logs)
-
-sh DiskCleanup.sh --all
-# or...
 sh DiskCleanup.sh --images --volumes --tomcat --apache
+
+# Or the shorthand for the same thing:
+sh DiskCleanup.sh --all
 
 # Or just some methods:
 sh DiskCleanup.sh --images --tomcat
 
+# Or All methods, with a report of the results sent to the provided email address
+sh DiskCleanup --all --email kualisys@bu.edu
+
 # To specify a cron schedule instead use --crontab. 
-# This example invokes cleanup for images and tomcat on the 1st day of the month at 2AM
-sh DiskCleanup.sh --images --tomcat --crontab '0 2 1 * *'
+# This example invokes cleanup for images and tomcat on the 1st day of the month at 2AM.
+# The results are sent in an email.
+sh DiskCleanup.sh --images --tomcat --crontab '0 2 1 * *' --email kualisys@bu.edu
+
+# Or the same, but every Saturday at 2am
+sh DiskCleanup.sh --images --tomcat --crontab '0 2 * * Sat' --email kualisys@bu.edu
 ```
 
-​     
+> *NOTE: emails are sent using aws ses (simple email service). The sending email address must be verified with the service. You can do that [here](https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-email:)* 
+> *The email "kualisys@bu.edu" is provided in the example. Any provided email will be used as both the sender and the receiver (it sends an email to itself).* 
 
-**Notifications:**
+​      
 
-If for any reason the above disk pruning measures fail to account for some runaway process that is filling up disk space, there are a number of ways to automate the monitoring of disk size and email notification for breaches in utilization thresholds.
+**Low disk notifications:**
 
+If for any reason the above disk pruning measures fail to account for some runaway process that is filling up disk space, the same script can be used to set up monitoring of disk space on a cron schedule:
+
+```
+# Do steps 1 & 2 from the example above
+
+# This example sets up a cron schedule to check disk utilization every 5 minutes.
+# An email warning is sent if an 85% threshold is breached.
+sh DiskCleanup.sh \
+  --notify-disk-crontab '*/5 * * * *' \
+  --notify-disk-percent 85 \
+  --email kualisys@bu.edu
+  
+# For testing (you want to see what the email looks like), omit the crontab and use a low percent
+sh DiskCleanup.sh \
+  --notify-disk-percent 2 \
+  --email wrh@bu.edu
+```
+
+> *NOTE: 
+> 1) Emails are sent using aws ses (simple email service). The sending email address must be verified with the service. You can do that [here](https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-email:)* 
+> *The email "kualisys@bu.edu" is provided in the example. Any provided email will be used as both the sender and the receiver (it sends an email to itself).*
+> *2)  If a warning notification is sent, the next won't be sent for another 24 hours. This prevents an email flood where the crontab interval invokes the check minutes/hours apart.*
