@@ -301,7 +301,8 @@ sendReport() {
   --from $email \
   --to $email \
   --subject "Kuali ec2 disk cleanup report for $(getEnvIdentifier)" \
-  --text "$(cat $logfile)"
+  --text "$(cat $logfile)" \
+  --html "<pre>$(cat $logfile)</pre>"
 }
 
 # Check that the percent disk utilization is under the specified percentage. 

@@ -125,7 +125,7 @@ pullUpstream() {
 
 pushUpstreamToBU() {
   local cmd="git push --tags bu $upstream:$upstream"
-  echo "$cmd" # && eval "$cmd" 
+  echo "$cmd" && eval "$cmd" 
   [ $? -gt 0 ] && echo "Error pushing kualico upstream branch to bu upstream branch!"
 }
 
