@@ -45,8 +45,12 @@ Each kuali module (ie: cor-main, research-dashboard, kc, etc.) undergoes 5 main 
    git push --tags origin upstream:master
    ```
 
-   ​    
+   
 
+   A [helper script](ReleashPrepHelperScript.md) has been prepared to automate much of the actions detailed above (all except merging). 
+   
+      
+   
 2. **Jenkins Job 1**
    Pull helper scripts to from github to aid in running the remaining jenkins jobs.
    [View description and diagram](Jenkins1.md) 

@@ -132,10 +132,13 @@ There are two main culprits for gradual size increase of used disk space on our 
          docker start apache-shibboleth
          ```
 
-         
+
+
+
+#### Automation
 
 To automate all the actions above, a script is included in this repository: [DiskCleanup.sh](DiskCleanup.sh)
-You can place this script file on any EC2 instance and run it or set it on a cron schedule as follows:
+You can place this script file on any EC2 instance and run it directly or through a cron schedule as follows:
 
 ```
 # You have shelled into an EC2 instance.
@@ -144,7 +147,7 @@ You can place this script file on any EC2 instance and run it or set it on a cro
 sudo su root
 cd ~
 
-# 2) Acquire DiskCleanup.md from this git repository
+# 2) Acquire DiskCleanup.sh from this git repository
 # You can cut and paste the old-fashioned way, or you could use the personal access token
 # that belongs to the bu-ist-user github user. You can find this token under passwords in
 # 1Password entitled "Personal Access Token for bu-ist-user"
@@ -180,8 +183,7 @@ sh DiskCleanup.sh --images --tomcat --crontab '0 2 1 * *' --email kualisys@bu.ed
 sh DiskCleanup.sh --images --tomcat --crontab '0 2 * * Sat' --email kualisys@bu.edu
 ```
 
-> *NOTE: emails are sent using aws ses (simple email service). The sending email address must be verified with the service. You can do that [here](https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-email:)* 
-> *The email "kualisys@bu.edu" is provided in the example. Any provided email will be used as both the sender and the receiver (it sends an email to itself).* 
+> *NOTE: emails are sent using aws ses (simple email service). The sending email address must be verified with the service. You can do that [here](https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-email:)*. *The email "kualisys@bu.edu" is provided in the example. Any provided email will be used as both the sender and the receiver (it sends an email to itself).* 
 
 ​      
 
@@ -205,7 +207,7 @@ sh DiskCleanup.sh \
   --email wrh@bu.edu
 ```
 
-> *NOTE: 
-> 1) Emails are sent using aws ses (simple email service). The sending email address must be verified with the service. You can do that [here](https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-email:)* 
-> *The email "kualisys@bu.edu" is provided in the example. Any provided email will be used as both the sender and the receiver (it sends an email to itself).*
-> *2)  If a warning notification is sent, the next won't be sent for another 24 hours. This prevents an email flood where the crontab interval invokes the check minutes/hours apart.*
+> *NOTE:* 
+>
+> * *Emails are sent using aws ses (simple email service). The sending email address must be verified with the service. You can do that [here](https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-email:). The email "kualisys@bu.edu" is provided in the example. Any provided email will be used as both the sender and the receiver (it sends an email to itself).* 
+> * *If a warning notification is sent, the next won't be sent for another 24 hours. This prevents an email flood where the crontab interval invokes the check minutes/hours apart.*
