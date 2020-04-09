@@ -7,6 +7,8 @@ A [helper script](gitPullPush.sh) has been prepared to automate much of the acti
 3. Pull all commits from the upstream kualico repository to the upstream branch
 4. Push the local upstream repository to the Boston University github copy of the upstream branch
 
+![](images\GitPullPush.png)
+
 In most cases the "upstream" branch and the custom branch (ie: bu-master) are the same branch because the module is not one we are customizing. If the module is being customized, the custom branch will be left checked out and ready for further steps to be performed manually involving merging a selected commit from the upstream branch into it, tagging and pushing to the bu github account.
 
 ```
