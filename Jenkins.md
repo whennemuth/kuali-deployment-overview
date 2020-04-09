@@ -47,7 +47,7 @@ Each kuali module (ie: cor-main, research-dashboard, kc, etc.) undergoes 5 main 
 
    
 
-   A [helper script](ReleashPrepHelperScript.md) has been prepared to automate much of the actions detailed above (all except merging). 
+   A [helper script](ReleasePrepHelperScript.md) has been prepared to automate much of the actions detailed above (all except merging). 
    
       
    
