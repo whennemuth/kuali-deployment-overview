@@ -14,10 +14,10 @@ prune() {
 
   logState "Pruned"
 
-  [ -n "$emailAddress" ] && sendReport
+  [ -n "$email" ] && sendReport
 }
 
-setCrontab() {
+setPruningCrontab() {
   local crondir="/etc/cron.d"
   [ ! -d $crondir ] && crondir="/root"
   local crontabfile="$crondir/kuali-prune-crontab"
@@ -355,7 +355,7 @@ parseargs "$@"
 if [ -n "$LOGGING" ] ; then
   shift
   if [ -n "$crontab" ] ; then
-    setCrontab
+    setPruningCrontab
   else
     prune
   fi
