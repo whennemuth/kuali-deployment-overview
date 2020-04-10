@@ -82,6 +82,7 @@ EOF
 }
 
 logState() {
+  [ "$skipLogState" == "true" ] && return 0
   local msg="$1 disk space"
   logHeading "$msg"
   if [ -n "$debug" ] ; then
@@ -192,6 +193,9 @@ parseargs() {
         shift ;;
       -d|--debug)
         debug="true" 
+        shift ;;
+      -s|--skip-log-state)
+        skipLogState="true"
         shift ;;
       --LOGGING)
         # Private variable this script uses to call itself for file logging.
