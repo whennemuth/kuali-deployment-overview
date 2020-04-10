@@ -8,7 +8,7 @@ prune() {
 
   [ -n "$volumes" ] && pruneVolumes
 
-  [ -n "$tomcat" ] && pruneTomcatLogs
+  [ -n "$tomcat" ] && pruneTomcatLogs 30
 
   [ -n "$apache" ] && pruneApacheLogs
 
@@ -298,7 +298,7 @@ getEnvIdentifier() {
 
 sendReport() {
   aws ses send-email \
-  --from $email \
+  --from ist-cloud-kuali@bu.edu \
   --to $email \
   --subject "Kuali ec2 disk cleanup report for $(getEnvIdentifier)" \
   --text "$(cat $logfile)" \
@@ -328,7 +328,7 @@ EOF
 ) 
     if daySinceLastEmail ; then   
       aws ses send-email \
-        --from $email \
+        --from ist-cloud-kuali@bu.edu \
         --to $email \
         --subject "$subject" \
         --text "$text"
