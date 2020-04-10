@@ -132,7 +132,7 @@ pruneTomcatLogs() {
   if [ -n "$debug" ] ; then
     echo "DEBUG: Pruning tomcat logs..."
   elif [ ! -d $logdir ] ; then
-    echo "Tomcat directory does not exist: $logdir"
+    echo "$logdir directory does not exist: $logdir"
     return 0
   else
     days=$1
@@ -149,20 +149,25 @@ pruneApacheLogs() {
   if [ -n "$debug" ] ; then
     echo "DEBUG: Pruning apache logs..."
   elif [ ! -d $logdir ] ; then
-    echo "Tomcat directory does not exist: $logdir"
+    echo "$logdir directory does not exist: $logdir"
     return 0
   else
     # Stop apache docker container
+    echo "Stopping apache-shibboleth docker container..."
     docker stop apache-shibboleth
     # Remove any existing archives
+    echo "Removing existing archive file(s)..."
     rm -f $logdir/archive-*
     # Archive all the current logs
+    echo "Archiving log files into single tar file..."
     tar -czvf $logdir/archive-$(date '+%b-%d-%Y-%T').tar.gz $logdir
     # Delete all the current logs now that they are archived
+    echo "Deleting log files now that they are archived..."
     for log in $(ls -1 $logdir | grep -v 'archive') ; do
         rm -f $logdir/$log
     done 
     # Restart apache docker container
+    echo "Starting apache-shibboleth docker container..."
     docker start apache-shibboleth
   fi
 }
