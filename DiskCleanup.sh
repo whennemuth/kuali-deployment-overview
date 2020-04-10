@@ -135,7 +135,10 @@ pruneTomcatLogs() {
     return 0
   else
     days=$1
+    files=$(find $logdir -type f -mtime +${days} | wc -l)
+    echo "There are $files files in $logdir that haven't been modified in $days or more days."
     find $logdir -type f -mtime +${days} -exec rm -f {} \;
+    echo "$files files deleted."
   fi
 }
 
