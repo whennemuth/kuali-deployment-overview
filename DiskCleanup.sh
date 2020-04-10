@@ -312,7 +312,7 @@ sendReport() {
   aws ses send-email \
   --from ist-cloud-kuali@bu.edu \
   --to $email \
-  --subject "Kuali ec2 disk cleanup report for $(getEnvIdentifier)" \
+  --subject "KUALI MAINTENANCE REPORT: Kuali ec2 disk cleanup report for $(getEnvIdentifier)" \
   --text "$(cat $logfile)" \
   --html "<pre>$(cat $logfile)</pre>"
 }
@@ -324,7 +324,7 @@ checkLowDisk() {
   local instanceId="$(curl http://169.254.169.254/latest/meta-data/instance-id 2> /dev/null)"
 
   if [ $percentUsed -ge $notifyPercent ] ; then
-    local subject="${notifyPercent}% disk utilization exceeded for kuali ec2 $(getEnvIdentifier)"
+    local subject="KUALI MAINTENANCE ALERT!: ${notifyPercent}% disk utilization exceeded for kuali ec2 $(getEnvIdentifier)"
     local text=$(cat <<EOF
 
     EC2 instance: 
