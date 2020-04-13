@@ -8,7 +8,7 @@ prune() {
 
   [ -n "$volumes" ] && pruneVolumes
 
-  [ -n "$tomcat" ] && pruneTomcatLogs 30
+  [ -n "$tomcat" ] && pruneTomcatLogs
 
   [ -n "$apache" ] && pruneApacheLogs
 
@@ -136,10 +136,9 @@ pruneTomcatLogs() {
     echo "$logdir directory does not exist: $logdir"
     return 0
   else
-    days=$1
-    files=$(find $logdir -type f -mtime +${days} | wc -l)
-    echo "There are $files files in $logdir that haven't been modified in $days or more days."
-    find $logdir -type f -mtime +${days} -exec rm -f {} \;
+    files=$(find $logdir -type f -mtime +${tomcatDeleteLogsAfterDays} | wc -l)
+    echo "There are $files files in $logdir that haven't been modified in $tomcatDeleteLogsAfterDays or more days."
+    find $logdir -type f -mtime +${tomcatDeleteLogsAfterDays} -exec rm -f {} \;
     echo "$files files deleted."
   fi
 }
@@ -217,6 +216,8 @@ parseargs() {
         eval "$(parseValue $1 "$2" 'notifyPercent')" ;;
       --notify-disk-crontab)
         eval "$(parseValue $1 "$2" 'notifyCrontab')" ;;
+      --tomcat-delete-logs-after-days)
+        eval "$(parseValue $1 "$2" 'tomcatDeleteLogsAfterDays')" ;;
       -*|--*=) # unsupported flags
         echo "Error: Unsupported flag $1" >&2
         printusage
@@ -228,6 +229,8 @@ parseargs() {
         ;;
     esac
   done
+
+  [ -z "$tomcatDeleteLogsAfterDays" ] && tomcatDeleteLogsAfterDays=30
 
   # set positional arguments in their proper place
   eval set -- "$posargs"
