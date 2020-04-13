@@ -28,6 +28,7 @@ setPruningCrontab() {
   [ -n "$apache" ]  && args="$args --apache"
   [ -n "$debug" ]   && args="$args --debug"
   [ -n "$email" ]   && args="$args --email $email"
+  [ -n "$tomcatDeleteLogsAfterDays" ] && args="$args --tomcat-delete-logs-after-days $tomcatDeleteLogsAfterDays"
   args="$args --logfile $logfile"
 
   local scriptdir="$(dirname "$0")"
