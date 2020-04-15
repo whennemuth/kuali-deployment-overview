@@ -51,22 +51,55 @@ Each kuali module (ie: cor-main, research-dashboard, kc, etc.) undergoes 5 main 
    
       
    
-2. **Jenkins Job 1**
+2. **<u>Configuration Preparation:</u>**
+   
+   Some configuration files cannot be "baked" into docker images because:
+   
+- They contain sensitive info like database passwords, keys, etc.
+   - They contain environment-specific information too unweildy to inject into a docker container as an environment variable provided with the docker run command.
+   
+   All such configuration files are kept in an s3 `bucket: kuali-research-ec2-setup`
+   
+   A typical release may include new features that need configuration modifications to these files.
+   
+   ```
+   # Acquire all configs for every environment:
+   cd ~ && mkdir s3 && cd s3
+   for env in sb ci qa stg prod ; do \
+     aws s3 cp --recursive s3://kuali-research-ec2-setup/$env ./$env; \
+   done
+   
+   # Show a diff of two files:
+   diff -y --color=always stg/kuali/main/config/kc-config.xml prod/kuali/main/config/kc-config.xml
+   
+   # Make a change to the prod kc-config file
+   echo "Making changes"
+   
+   # Upload to s3 your changes to the prod kc-config file
+   aws s3 cp ~/s3/prod/kuali/main/config/kc-config.xml s3://kuali-research-ec2-setup/prod/kuali/main/config/kc-config.xml
+   
+   # Download from s3 your changes
+   ssh yourself@ec2-ip -i path/to/your/ssh/key "sudo aws s3 cp s3://kuali-research-ec2-setup/prod/kuali/main/config/kc-config.xml /opt/kuali/main/config/kc-config.xml"
+   ```
+   
+   
+   
+3. **Jenkins Job 1**
    Pull helper scripts to from github to aid in running the remaining jenkins jobs.
    [View description and diagram](Jenkins1.md) 
        
 
-3. **Jenkins Job 2**
+4. **Jenkins Job 2**
    Build the docker image for a specific module and environment.
    [View description and diagram](Jenkins2.md)
        
 
-4. **Jenkins Job 3**
+5. **Jenkins Job 3**
    Push the built docker image to our ECR docker registry
    [View description and diagram](Jenkins3.md)
        
 
-5. **Jenkins Job 4**
+6. **Jenkins Job 4**
    Issue commands using the AWS system manager to the EC2 instance(s) to acquire the new docker image and restart their containers against the new release it contains.
    [View description and diagram](Jenkins4.md)
 
