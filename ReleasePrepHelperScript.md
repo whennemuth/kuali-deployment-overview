@@ -1,6 +1,6 @@
 ### Release prep github helper script
 
-A [helper script](gitPullPush.sh) has been prepared to automate much of the actions detailed in [The main jenkins readme file](Jenkins.md) (all except merging). Use this script to automate pulling new github content from upstream kualico repositories and pushing this content to each corresponding upstream branch in the boston university github repository. The sequence of actions for each repository is:
+A [Git Pull Push Script](GitPullPush.sh) has been prepared to automate much of the actions detailed in [The main jenkins readme file](Jenkins.md) (all except merging). Use this script to automate pulling new github content from upstream kualico repositories and pushing this content to each corresponding upstream branch in the boston university github repository. The sequence of actions for each repository is:
 
 1. Clone the repository from the boston university github account
 2. Checkout the upstream branch (from kualico) if one is indicated.
