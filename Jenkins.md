@@ -58,7 +58,7 @@ Each kuali module (ie: cor-main, research-dashboard, kc, etc.) undergoes 5 main 
 - They contain sensitive info like database passwords, keys, etc.
    - They contain environment-specific information too unweildy to inject into a docker container as an environment variable provided with the docker run command.
    
-   All such configuration files are kept in an s3 `bucket: kuali-research-ec2-setup`
+   All such configuration files are kept in an s3 [bucket: kuali-research-ec2-setup](https://s3.console.aws.amazon.com/s3/buckets/kuali-research-ec2-setup/?region=us-east-1)
    
    A typical release may include new features that need configuration modifications to these files.
    
