@@ -13,7 +13,7 @@ This repository contains two scripts to run for quickly adding a new user to an 
 
 **Steps:**
 
-- Clone this repository
+- Clone this repository to use the AddUser.sh script
 
   ```
   git clone https://github.com/bu-ist/kuali-deployment-overview.git
