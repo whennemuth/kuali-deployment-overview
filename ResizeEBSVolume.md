@@ -22,6 +22,6 @@ aws ec2 attach-volume --volume-id [???] --instance-id i-0f0f920848adfa906 --devi
 # Start the EC2 instance
 aws ec2 start-instances --instance-ids i-0f0f920848adfa906
 
-NOTE attach-volume command complains about bad device name when run from windows.
+NOTE: You may get a warning about attach-volume command complains about bad device name when run from Windows. You can ignore this warning
 ```
 
