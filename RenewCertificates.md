@@ -31,10 +31,10 @@ aws acm import-certificate \
 # 2) Get a list of load balancer names
 aws elb describe-load-balancers | grep "LoadBalancerName"
 
-# 3) Get the arn of the cert that was just uploaded and the arn of the cert it replaces.
+# 3) Get the ARN of the cert that was just uploaded and the ARN of the cert it replaces.
 aws acm list-certificates
 
-# 4) Using the selected elb name and certificate ARN, change the certificate being used for the elb https listener.
+# 4) Using the selected ELB name and certificate ARN, change the certificate being used for the ELB https listener.
 aws elb set-load-balancer-listener-ssl-certificate \
 --load-balancer-name buaws-kuali-elbweb-stage001 \
 --load-balancer-port 443 \
