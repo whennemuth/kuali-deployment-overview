@@ -24,4 +24,5 @@ This repository comprises a rough knowledge transfer and documentation point for
     Details how the EC2 server application hosts and the Jenkins EC2 server have been given access to certain AWS resources through command line interface (cli) calls.
   - [EC2 Disk Cleanup](DiskCleanup.md)
     Details how to reclaim disk space on our EC2 application hosts due to logging and docker activity.
+  - [Where Are The Logs](WhereAreTheLogs.md) This file lists the locations of where some of the logs are
 
