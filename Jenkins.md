@@ -48,6 +48,9 @@ Each kuali module (ie: cor-main, research-dashboard, kc, etc.) undergoes 5 main 
    
 
    A [helper script](ReleasePrepHelperScript.md) has been prepared to automate much of the actions detailed above (all except merging). 
+   If you were doing this manually this is how the branches are arranged.
+
+![alt text](https://github.com/bu-ist/kuali-deployment-overview/blob/master/images/GitRepos.jpg "Git Repos and Branches")
    
       
    
