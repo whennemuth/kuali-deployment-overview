@@ -172,7 +172,7 @@ sh DiskCleanup.sh --all
 sh DiskCleanup.sh --images --tomcat
 
 # Or All methods, with a report of the results sent to the provided email address
-sh DiskCleanup --all --email kualisys@bu.edu
+sh DiskCleanup.sh --all --email kualisys@bu.edu
 
 # To specify a cron schedule instead use --crontab. 
 # This example invokes cleanup for images and tomcat on the 1st day of the month at 2AM.
