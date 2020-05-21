@@ -27,6 +27,8 @@ aws acm import-certificate \
   --certificate file://kuali-research-stg_bu_edu_cert.cer \
   --private-key file://kuali-research-stg.bu.edu-2048bit-sha256-2019.key \
   --certificate-chain file://kuali-research-stg_bu_edu_interm.cer
+  
+  #(Note: use fileb://... if using CLI 2)
 
 # 2) Get a list of load balancer names
 aws elb describe-load-balancers | grep "LoadBalancerName"
