@@ -23,13 +23,12 @@ This example was used to replace the certificate for our staging environment and
 
 ```
 # 1) Import the new certificate.
+# Note: use fileb://... if using CLI 2, for more info go to: https://docs.aws.amazon.com/cli/latest/userguide/cliv2-migration.html#cliv2-migration-binaryparam
 aws acm import-certificate \
-  --certificate file://kuali-research-stg_bu_edu_cert.cer \
-  --private-key file://kuali-research-stg.bu.edu-2048bit-sha256-2019.key \
+  --certificate file://kuali-research-stg_bu_edu_cert.cer \  
+  --private-key file://kuali-research-stg.bu.edu-2048bit-sha256-2019.key \  
   --certificate-chain file://kuali-research-stg_bu_edu_interm.cer
   
-  #(Note: use fileb://... if using CLI 2)
-
 # 2) Get a list of load balancer names
 aws elb describe-load-balancers | grep "LoadBalancerName"
 
